@@ -1,6 +1,12 @@
 from flask import Flask, abort, jsonify, request
+from pymongo import MongoClient
+import os
 
 app = Flask(__name__)
+
+# ------------------Borrar esto cuando este n uso la base de datos ---------------------------------------------------------------------------
+# ------------------Borrar esto cuando este n uso la base de datos ---------------------------------------------------------------------------
+# ------------------Borrar esto cuando este n uso la base de datos ---------------------------------------------------------------------------
 
 # Datos de ejemplo (podrían ser datos de una base de datos)
 usuarios = [
@@ -8,6 +14,41 @@ usuarios = [
     {'id': 2, 'nombre': 'Carranza, Agustin', 'rol': 'normal', 'RFID': 'null'},
     # Agrega más datos según sea necesario
 ]
+
+# ------------------Borrar esto cuando este n uso la base de datos ---------------------------------------------------------------------------
+# ------------------Borrar esto cuando este n uso la base de datos ---------------------------------------------------------------------------
+# ------------------Borrar esto cuando este n uso la base de datos ---------------------------------------------------------------------------
+
+# Configuración de la conexión a MongoDB
+# Función para leer las credenciales del archivo .env
+
+credenciales = {}
+with open('.env', 'r') as archivo:
+    lineas = archivo.readlines()
+    for linea in lineas:
+        if linea.__contains__('USER') or linea.__contains__('PASS'):
+            clave, valor = linea.strip().split('=')
+            credenciales[clave] = valor
+    
+
+# Obtener las credenciales del archivo .env
+usuario = credenciales.get('usuario')
+password = credenciales.get('password')
+
+client = MongoClient('mongodb://localhost:27017/')
+db = client['mi_base_de_datos']  # Reemplaza 'mi_base_de_datos' con el nombre de tu base de datos
+
+# Obtiene el nombre del archivo .py
+nombre_archivo = os.path.basename(__file__)
+nombre_api = nombre_archivo[:-3]  # Elimina la extensión .py
+
+@app.route('/', methods=['GET'])
+def dav_home():
+    api_info = {
+        "nombre_api": nombre_api,
+        "version": "1.0"
+    }
+    return jsonify(api_info)
 
 # Ruta para obtener todos los usuarios
 @app.route('/api/usuarios', methods=['GET'])
